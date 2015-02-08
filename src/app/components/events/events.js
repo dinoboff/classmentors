@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  angular.module('spf').
+  angular.module('clm').
 
   config([
     '$routeProvider',
@@ -29,13 +29,13 @@
    */
   factory('classMentorsEventListRsolver', [
     '$q',
-    'spfAuth',
-    'spfDataStore',
-    function classMentorsEventListRsolverFactory($q, $spfAuth, spfDataStore) {
+    'clmAuth',
+    'clmDataStore',
+    function classMentorsEventListRsolverFactory($q, $clmAuth, clmDataStore) {
       return function classMentorsEventRsolver() {
         return $q.all({
-          events: spfDataStore.classMentor.events.list().$loaded(),
-          auth: $spfAuth
+          events: clmDataStore.classMentor.events.list().$loaded(),
+          auth: $clmAuth
         });
       };
     }
@@ -48,9 +48,9 @@
   controller('ClassMentorsEventList', [
     '$q',
     'initialData',
-    'spfDataStore',
-    'spfAlert',
-    function ClassMentorsEventList($q, initialData, spfDataStore, spfAlert) {
+    'clmDataStore',
+    'clmAlert',
+    function ClassMentorsEventList($q, initialData, clmDataStore, clmAlert) {
       var self = this;
 
       this.events = initialData.events;
@@ -60,7 +60,7 @@
 
       this.save = function(eventCollection, newEvent, password, eventForm) {
         self.creatingEvent = false;
-        spfDataStore.auth.user().then(function(userData) {
+        clmDataStore.auth.user().then(function(userData) {
           var data = Object.assign({
             ownerId: self.auth.user.uid,
             ownerName: userData.nickName,
@@ -69,12 +69,12 @@
             }
           }, newEvent);
 
-          return spfDataStore.classMentor.events.create(eventCollection, data, password);
+          return clmDataStore.classMentor.events.create(eventCollection, data, password);
         }).then(function() {
-          spfAlert.success('New event created.');
+          clmAlert.success('New event created.');
           self.reset(eventForm);
         }).catch(function(e) {
-          spfAlert(e.toString());
+          clmAlert(e.toString());
         }).finally(function() {
           self.creatingEvent = false;
         });

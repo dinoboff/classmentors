@@ -24,7 +24,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="event-name">Event Name:</label>
-                    <input name="eventName" type="text" class="form-control" id="event-name" ng-model="ctrl.newEvent.data.name" ng-minlength="3" ng-maxlength="30" ng-required="true" spf-bs-valid-class="true" />
+                    <input name="eventName" type="text" class="form-control" id="event-name" ng-model="ctrl.newEvent.data.name" ng-minlength="3" ng-maxlength="30" ng-required="true" clm-bs-valid-class="true" />
                     <span class="text-warning" ng-messages="newEventForm.eventName.$error">
                         <span class="help-block" ng-message="required">An event should have a name.</span>
                         <span class="help-block" ng-message="minlength">An event name should shouldn't be shorten than 3 characters.</span>
@@ -34,7 +34,7 @@
 
                 <div class="form-group">
                     <label class="control-label" for="event-pw">Event Password:</label>
-                    <input name="eventPw" type="text" class="form-control" id="event-pw" ng-model="ctrl.newEvent.password" ng-required="true" spf-bs-valid-class="true" />
+                    <input name="eventPw" type="text" class="form-control" id="event-pw" ng-model="ctrl.newEvent.password" ng-required="true" clm-bs-valid-class="true" />
                     <span class="text-warning" ng-messages="newEventForm.eventPw.$error">
                         <span class="help-block" ng-message="required">An event should have a password.</span>
                     </span>

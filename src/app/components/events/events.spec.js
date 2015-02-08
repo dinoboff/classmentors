@@ -4,10 +4,10 @@
 // (function() {
 //   'use strict';
 
-//   describe('spf class mentors home components', function() {
+//   describe('clm class mentors home components', function() {
 //     var $controller, $rootScope, $q;
 
-//     beforeEach(module('spf'));
+//     beforeEach(module('clm'));
 
 //     beforeEach(inject(function(_$rootScope_, _$q_, _$controller_) {
 //       $controller = _$controller_;
@@ -20,9 +20,9 @@
 //       var auth, ctrl;
 
 //       beforeEach(function() {
-//         auth = jasmine.createSpyObj('spfAuth', ['login', 'logout']);
+//         auth = jasmine.createSpyObj('clmAuth', ['login', 'logout']);
 //         ctrl = $controller('ClassMentorsEventList', {
-//           spfAuth: auth,
+//           clmAuth: auth,
 //         });
 //       });
 

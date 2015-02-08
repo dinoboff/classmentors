@@ -53,9 +53,9 @@ partial, their file names should all starts with `<component-name>-view`:
 (function() {
   'use strict';
 
-  // all features share the same module, `spf`
-  // the `spf` module dependencies are defined in `src/app/app.js`
-  angular.module('spf').
+  // all features share the same module, `clm`
+  // the `clm` module dependencies are defined in `src/app/app.js`
+  angular.module('clm').
 
   config([
     '$routeProvider',
@@ -142,9 +142,9 @@ Tests the controller and its resolver.
 (function() {
   'use strict';
 
-  describe('spf some feature of class mentors', function() {
-    // load spf
-    beforeEach(module('spf'));
+  describe('clm some feature of class mentors', function() {
+    // load clm
+    beforeEach(module('clm'));
 
 
     describe('ClsMentorSomeCtrl', function() {

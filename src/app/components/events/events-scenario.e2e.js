@@ -4,8 +4,8 @@ describe('angularjs homepage', function() {
   'use strict';
 
   beforeEach(function() {
-    browser.addMockModule('e2eSpfMock', function() {
-      angular.module('e2eSpfMock', ['spf']);
+    browser.addMockModule('e2eClmMock', function() {
+      angular.module('e2eClmMock', ['clm']);
     });
   });
 

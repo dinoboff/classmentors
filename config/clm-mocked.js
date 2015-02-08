@@ -5,12 +5,12 @@
 exports.module = function(angular, firebaseUrl) {
   'use strict';
 
-  angular.module('spfMocked', ['spf', 'ngMockE2E']).
+  angular.module('clmMocked', ['clm', 'ngMockE2E']).
 
   config([
-    'spfFirebaseRefProvider',
-    function(spfFirebaseRefProvider) {
-      spfFirebaseRefProvider.setBaseUrl(firebaseUrl);
+    'clmFirebaseRefProvider',
+    function(clmFirebaseRefProvider) {
+      clmFirebaseRefProvider.setBaseUrl(firebaseUrl);
     }
   ]).
 

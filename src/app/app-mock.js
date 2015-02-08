@@ -5,10 +5,10 @@
 (function() {
   'use strict';
 
-  angular.module('spfMocked', ['spf', 'ngMockE2E']).config([
-    'spfFirebaseRefProvider',
-    function(spfFirebaseRefProvider){
-      spfFirebaseRefProvider.setBaseUrl('https://singpath-play.firebaseIO.com');
+  angular.module('clmMocked', ['clm', 'ngMockE2E']).config([
+    'clmFirebaseRefProvider',
+    function(clmFirebaseRefProvider){
+      clmFirebaseRefProvider.setBaseUrl('https://singpath-play.firebaseIO.com');
     }
   ]).run([
     '$httpBackend',

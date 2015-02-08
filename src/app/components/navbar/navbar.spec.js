@@ -4,7 +4,7 @@
 (function() {
   'use strict';
 
-  describe('spf', function() {
+  describe('clm', function() {
 
     /**
      * Test core singpath fire controllers.
@@ -13,7 +13,7 @@
     describe('controllers', function() {
       var $controller, $rootScope, $q;
 
-      beforeEach(module('spf'));
+      beforeEach(module('clm'));
 
       beforeEach(inject(function(_$rootScope_, _$q_, _$controller_) {
         $controller = _$controller_;
@@ -23,20 +23,20 @@
 
 
       /**
-       * Test SpfSharedNavBarCtrl.
+       * Test ClmSharedNavBarCtrl.
        */
-      describe('SpfSharedNavBarCtrl', function() {
+      describe('ClmSharedNavBarCtrl', function() {
         var ctrl, alert, auth;
 
         beforeEach(function() {
-          auth = jasmine.createSpyObj('spfAuth', ['login', 'logout']);
-          alert = jasmine.createSpy('spfAlert');
+          auth = jasmine.createSpyObj('clmAuth', ['login', 'logout']);
+          alert = jasmine.createSpy('clmAlert');
           ['info', 'success', 'warning', 'danger'].map(function(k) {
             alert[k] = jasmine.createSpy(k);
           });
-          ctrl = $controller('SpfSharedNavBarCtrl', {
-            spfAuth: auth,
-            spfAlert: alert
+          ctrl = $controller('ClmSharedNavBarCtrl', {
+            clmAuth: auth,
+            clmAlert: alert
           });
         });
 

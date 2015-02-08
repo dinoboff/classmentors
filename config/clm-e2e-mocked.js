@@ -5,27 +5,27 @@
 exports.module = function(angular, config) {
   'use strict';
 
-  angular.module('spfMocked', ['spf', 'ngMockE2E']).
+  angular.module('clmMocked', ['clm', 'ngMockE2E']).
 
   constant('firebaseConfig', config).
 
   config([
-    'spfFirebaseRefProvider',
-    function(spfFirebaseRefProvider) {
-      spfFirebaseRefProvider.setBaseUrl(config.url);
+    'clmFirebaseRefProvider',
+    function(clmFirebaseRefProvider) {
+      clmFirebaseRefProvider.setBaseUrl(config.url);
     }
   ]).
 
   config([
     '$provide',
     function($provide) {
-      $provide.decorator('spfAuth', [
+      $provide.decorator('clmAuth', [
         '$q',
         '$delegate',
         '$firebaseAuth',
-        'spfFirebase',
-        function($q, $delegate, $firebaseAuth, spfFirebase) {
-          var auth = $firebaseAuth(spfFirebase());
+        'clmFirebase',
+        function($q, $delegate, $firebaseAuth, clmFirebase) {
+          var auth = $firebaseAuth(clmFirebase());
 
           $delegate.login = function() {
             return auth.$authWithCustomToken(config.tokens.bob).then(function(user) {

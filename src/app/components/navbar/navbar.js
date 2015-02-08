@@ -1,12 +1,12 @@
  (function() {
   'use strict';
 
-  angular.module('spf').
+  angular.module('clm').
 
   /**
    * Controler for the header novigation bar.
    *
-   * Set an auth property bound to spfAuth. Its user property can used
+   * Set an auth property bound to clmAuth. Its user property can used
    * to display the state of the authentication and the user display name
    * when the user is logged in.
    *
@@ -14,23 +14,23 @@
    * the current user.
    *
    */
-  controller('SpfSharedNavBarCtrl', [
+  controller('ClmSharedNavBarCtrl', [
     '$q',
     '$aside',
-    'spfAlert',
-    'spfAuth',
-    function($q, $aside, spfAlert, spfAuth) {
-      this.auth = spfAuth;
+    'clmAlert',
+    'clmAuth',
+    function($q, $aside, clmAlert, clmAuth) {
+      this.auth = clmAuth;
 
       this.login = function() {
-        return spfAuth.login().catch(function(e) {
-          spfAlert.warning('You failed to authenticate with Google');
+        return clmAuth.login().catch(function(e) {
+          clmAlert.warning('You failed to authenticate with Google');
           return $q.reject(e);
         });
       };
 
       this.logout = function() {
-        return spfAuth.logout();
+        return clmAuth.logout();
       };
 
       this.openSideMenu = function(conf) {

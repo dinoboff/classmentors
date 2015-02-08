@@ -9,7 +9,7 @@
 (function() {
   'use strict';
 
-  angular.module('spf', [
+  angular.module('clm', [
     'angular-loading-bar',
     'firebase',
     'mgcrea.ngStrap',
@@ -130,38 +130,38 @@
   ]).
 
   /**
-   * spfFirebaseRef return a Firebase reference to singpath database,
+   * clmFirebaseRef return a Firebase reference to singpath database,
    * at a specific path, with a specific query; e.g:
    *
    *    // ref to "https://singpath.firebaseio.com/"
-   *    spfFirebaseRef);
+   *    clmFirebaseRef);
    *
    *    // ref to "https://singpath.firebaseio.com/auth/users/google:12345"
-   *    spfFirebaseRef(['auth/users', 'google:12345']);
+   *    clmFirebaseRef(['auth/users', 'google:12345']);
    *
    *    // ref to "https://singpath.firebaseio.com/events?limitTo=50"
-   *    spfFirebaseRef(['events', 'google:12345'], {limitTo: 50});
+   *    clmFirebaseRef(['events', 'google:12345'], {limitTo: 50});
    *
    *
-   * The base url is configurable with `spfFirebaseProvider.setBaseUrl`:
+   * The base url is configurable with `clmFirebaseProvider.setBaseUrl`:
    *
-   *    angular.module('spf').config([
-   *      'spfFirebaseRefProvider',
-   *      function(spfFirebaseRefProvider){
-   *          spfFirebaseRefProvider.setBaseUrl(newBaseUrl);
+   *    angular.module('clm').config([
+   *      'clmFirebaseRefProvider',
+   *      function(clmFirebaseRefProvider){
+   *          clmFirebaseRefProvider.setBaseUrl(newBaseUrl);
    *      }
    *    ])
    *
    */
-  provider('spfFirebaseRef', function SpfFirebaseProvider() {
+  provider('clmFirebaseRef', function ClmFirebaseProvider() {
     var baseUrl = 'https://singpath.firebaseio.com/';
 
     this.setBaseUrl = function(url) {
       baseUrl = url;
     };
 
-    this.$get = ['$window', '$log', function spfFirebaseRefFactory($window, $log) {
-      return function spfFirebaseRef(paths, queryOptions) {
+    this.$get = ['$window', '$log', function clmFirebaseRefFactory($window, $log) {
+      return function clmFirebaseRef(paths, queryOptions) {
         var ref = new $window.Firebase(baseUrl);
 
         $log.debug('singpath base URL: "' + baseUrl + '".');
@@ -184,15 +184,15 @@
   }).
 
   /**
-   * Like spfFirebaseRef by return an $firebase object.
+   * Like clmFirebaseRef by return an $firebase object.
    *
    */
-  factory('spfFirebaseSync', [
+  factory('clmFirebaseSync', [
     '$firebase',
-    'spfFirebaseRef',
-    function spfFirebaseSyncFactory($firebase, spfFirebaseRef) {
-      return function spfFirebaseSync() {
-        return $firebase(spfFirebaseRef.apply(null, arguments));
+    'clmFirebaseRef',
+    function clmFirebaseSyncFactory($firebase, clmFirebaseRef) {
+      return function clmFirebaseSync() {
+        return $firebase(clmFirebaseRef.apply(null, arguments));
       };
     }
   ]).
@@ -202,12 +202,12 @@
    * Returns an object with `user` (Firebase auth user data) property,
    * and login/logout methods.
    */
-  factory('spfAuth', [
+  factory('clmAuth', [
     '$q',
     '$firebaseAuth',
-    'spfFirebaseRef',
-    function($q, $firebaseAuth, spfFirebaseRef) {
-      var auth = $firebaseAuth(spfFirebaseRef());
+    'clmFirebaseRef',
+    function($q, $firebaseAuth, clmFirebaseRef) {
+      var auth = $firebaseAuth(clmFirebaseRef());
 
       return {
         // The current user auth data (null is not authenticated).
@@ -219,7 +219,7 @@
          * It will attempt the process using a pop up and fails back on
          * redirect.
          *
-         * Updates spfAuth.user and return a promise resolving to the
+         * Updates clmAuth.user and return a promise resolving to the
          * current user auth data.
          *
          */
@@ -230,7 +230,7 @@
             self.user = user;
             return user;
           }, function(error) {
-            // spfAlert.warning('You failed to authenticate with Google');
+            // clmAlert.warning('You failed to authenticate with Google');
             if (error.code === 'TRANSPORT_UNAVAILABLE') {
               return auth.$authWithOAuthRedirect('google');
             }
@@ -239,7 +239,7 @@
         },
 
         /**
-         * Unauthenticate user and reset spfAuth.user.
+         * Unauthenticate user and reset clmAuth.user.
          *
          */
         logout: function() {
@@ -262,20 +262,20 @@
    * Service to interact with singpath firebase db
    *
    */
-  factory('spfDataStore', [
+  factory('clmDataStore', [
     '$q',
-    'spfFirebaseRef',
-    'spfFirebaseSync',
-    'spfAuth',
+    'clmFirebaseRef',
+    'clmFirebaseSync',
+    'clmAuth',
     'crypto',
-    function spfDataStoreFactory($q, spfFirebaseRef, spfFirebaseSync, spfAuth, crypto) {
+    function clmDataStoreFactory($q, clmFirebaseRef, clmFirebaseSync, clmAuth, crypto) {
       var userData, userDataPromise, api;
 
       api = {
         auth: {
 
           _user: function() {
-            return spfFirebaseSync(['auth/users', spfAuth.user.uid]).$asObject();
+            return clmFirebaseSync(['auth/users', clmAuth.user.uid]).$asObject();
           },
 
           /**
@@ -286,7 +286,7 @@
            *
            */
           user: function() {
-            if (!spfAuth.user || !spfAuth.user.uid) {
+            if (!clmAuth.user || !clmAuth.user.uid) {
               return $q.reject(new Error('the user is not authenticated.'));
             }
 
@@ -328,9 +328,9 @@
             }
 
             userData.$value = {
-              id: spfAuth.user.uid,
-              nickName: spfAuth.user.google.displayName,
-              displayName: spfAuth.user.google.displayName,
+              id: clmAuth.user.uid,
+              nickName: clmAuth.user.google.displayName,
+              displayName: clmAuth.user.google.displayName,
               createdAt: {
                 '.sv': 'timestamp'
               }
@@ -345,7 +345,7 @@
         classMentor: {
           events: {
             list: function() {
-              return spfFirebaseSync(['classMentors/events'], {
+              return clmFirebaseSync(['classMentors/events'], {
                 orderByChild: 'timestamp',
                 limitToLast: 50
               }).$asArray();
@@ -354,7 +354,7 @@
             create: function(collection, data, password) {
               var hash, eventId;
 
-              if (!spfAuth.user || !spfAuth.user.uid) {
+              if (!clmAuth.user || !clmAuth.user.uid) {
                 return $q.reject(new Error('A user should be logged in to create an event.'));
               }
 
@@ -369,46 +369,46 @@
                   hash: hash.value,
                   options: hash.options
                 };
-                return spfFirebaseSync(['classMentors/eventPasswords']).$set(eventId, opts);
+                return clmFirebaseSync(['classMentors/eventPasswords']).$set(eventId, opts);
               }).then(function() {
                 return eventId;
               });
             },
 
             join: function(eventId, pw) {
-              if (!spfAuth.user || !spfAuth.user.uid) {
+              if (!clmAuth.user || !clmAuth.user.uid) {
                 return $q.reject(new Error('A user should be logged in to create an event.'));
               }
 
               var paths = {
                 hashOptions: ['classMentors/eventPasswords', eventId, 'options'],
-                application: ['classMentors/eventApplications', eventId, spfAuth.user.uid],
-                participation: ['classMentors/eventParticipants', eventId, spfAuth.user.uid]
+                application: ['classMentors/eventApplications', eventId, clmAuth.user.uid],
+                participation: ['classMentors/eventParticipants', eventId, clmAuth.user.uid]
               };
 
               // The owner can join without password.
               if (pw === null) {
-                return spfFirebaseSync(paths.participation).$set(true);
+                return clmFirebaseSync(paths.participation).$set(true);
               }
 
-              return spfFirebaseSync(paths.hashOptions).$asObject().$loaded().then(function(options) {
+              return clmFirebaseSync(paths.hashOptions).$asObject().$loaded().then(function(options) {
                 var hash = crypto.password.fromSalt(pw, options.$value.salt, options.$value);
-                return spfFirebaseSync(paths.application).$set(hash.value);
+                return clmFirebaseSync(paths.application).$set(hash.value);
               }).then(function() {
-                return spfFirebaseSync(paths.participation).$set(true);
+                return clmFirebaseSync(paths.participation).$set(true);
               });
             }
           },
 
           leave: function(eventId) {
-            if (!spfAuth.user || !spfAuth.user.uid) {
+            if (!clmAuth.user || !clmAuth.user.uid) {
               return $q.reject(new Error('A user should be logged in to create an event.'));
             }
 
-            return spfFirebaseSync([
+            return clmFirebaseSync([
               'classMentors/eventParticipants',
               eventId,
-              spfAuth.user.uid
+              clmAuth.user.uid
             ]).$set(false);
           }
         }
@@ -431,29 +431,29 @@
    * the class of the notication block: for type set `info`,
    * the block class will be set `alert` and `alert-info` (always lowercase).
    *
-   * `spfAlert.success`, `spfAlert.info`, `spfAlert.warning`
-   * and `spfAlert.danger` are shortcut for the spfAlert function.
+   * `clmAlert.success`, `clmAlert.info`, `clmAlert.warning`
+   * and `clmAlert.danger` are shortcut for the clmAlert function.
    *
    * They take as agurment the notification content and set respectively the
    * type to "Success", "Info", "Warning" and "Danger".
    *
    */
-  factory('spfAlert', [
+  factory('clmAlert', [
     '$window',
-    function spfAlertFactory($window) {
+    function clmAlertFactory($window) {
       var ctx = $window.alertify;
-      var spfAlert = function(type, content) {
+      var clmAlert = function(type, content) {
         type = type ? type.toLowerCase() : undefined;
         ctx.log(content, type);
       };
 
-      spfAlert.success = spfAlert.bind(ctx, 'success');
-      spfAlert.info = spfAlert.bind(ctx, null);
-      spfAlert.warning = spfAlert.bind(ctx, 'error');
-      spfAlert.danger = spfAlert.bind(ctx, 'error');
-      spfAlert.error = spfAlert.bind(ctx, 'error');
+      clmAlert.success = clmAlert.bind(ctx, 'success');
+      clmAlert.info = clmAlert.bind(ctx, null);
+      clmAlert.warning = clmAlert.bind(ctx, 'error');
+      clmAlert.danger = clmAlert.bind(ctx, 'error');
+      clmAlert.error = clmAlert.bind(ctx, 'error');
 
-      return spfAlert;
+      return clmAlert;
     }
   ]).
 
@@ -540,15 +540,15 @@
     }
   ]).
 
-  directive('spfBsValidClass', [
+  directive('clmBsValidClass', [
 
-    function spfBsValidClassFactory() {
+    function clmBsValidClassFactory() {
       return {
         restrict: 'A',
         scope: false,
         require: 'ngModel',
         // arguments: scope, iElement, iAttrs, controller
-        link: function spfBsValidClassPostLink(s, iElement, a, model) {
+        link: function clmBsValidClassPostLink(s, iElement, a, model) {
           var formControl, setPristine = model.$setPristine;
 
           function findFormController(input, className) {
@@ -576,7 +576,7 @@
             return setPristine.apply(model, arguments);
           };
 
-          model.$viewChangeListeners.push(function spfBsValidClassOnChange() {
+          model.$viewChangeListeners.push(function clmBsValidClassOnChange() {
 
             if (model.$pristine) {
               formControl.removeClass('has-error');

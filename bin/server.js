@@ -14,8 +14,8 @@
 var q = require('q');
 var express = require('express');
 var app = express();
-var spfMocked = require('../config/spf-mocked.js');
-var spfE2EMocked = require('../config/spf-e2e-mocked.js');
+var clmMocked = require('../config/clm-mocked.js');
+var clmE2EMocked = require('../config/clm-e2e-mocked.js');
 var sessions = require('./../lib/firebase-session');
 
 var argv = require('minimist')(process.argv);
@@ -85,18 +85,18 @@ app.use(function(req, res, next) {
 });
 
 
-app.get('/config/spf-mocked.js', function(req, res, next) {
+app.get('/config/clm-mocked.js', function(req, res, next) {
   getFirebaseConfig().then(function(config){
     res.set('Content-Type', 'application/javascript');
-    res.send('(' + spfMocked.module.toString() + ')(angular, ' + JSON.stringify(config.url) + ');');
+    res.send('(' + clmMocked.module.toString() + ')(angular, ' + JSON.stringify(config.url) + ');');
   }).catch(next);
 });
 
 
-app.get('/config/spf-e2e-mocked.js', function(req, res, next) {
+app.get('/config/clm-e2e-mocked.js', function(req, res, next) {
   getFirebaseConfig().then(function(config){
     res.set('Content-Type', 'application/javascript');
-    res.send('(' + spfE2EMocked.module.toString() + ')(angular, ' + JSON.stringify(config) + ');');
+    res.send('(' + clmE2EMocked.module.toString() + ')(angular, ' + JSON.stringify(config) + ');');
   }).catch(next);
 });
 

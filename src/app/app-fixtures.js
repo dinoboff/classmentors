@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  angular.module('spf').
+  angular.module('clm').
 
   constant('SPF_FIXTURES', {
 

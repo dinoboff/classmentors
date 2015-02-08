@@ -4,7 +4,7 @@
 (function() {
   'use strict';
 
-  describe('spf', function() {
+  describe('clm', function() {
 
     /**
      * Test core singpath fire controllers.
@@ -13,7 +13,7 @@
     describe('controllers', function() {
       var $controller, $rootScope, $q;
 
-      beforeEach(module('spf'));
+      beforeEach(module('clm'));
 
       beforeEach(inject(function(_$rootScope_, _$q_, _$controller_) {
         $controller = _$controller_;
@@ -36,7 +36,7 @@
         describe('password', function() {
           var provider, crypto;
 
-          beforeEach(module('spf', function(cryptoProvider) {
+          beforeEach(module('clm', function(cryptoProvider) {
             provider = cryptoProvider;
           }));
 
@@ -83,19 +83,19 @@
       });
 
 
-      describe('spfDataStore', function() {
+      describe('clmDataStore', function() {
 
-        beforeEach(module('spf'));
+        beforeEach(module('clm'));
 
         describe('auth', function() {
-          var spfFirebaseSync, spfAuth, sync, userObj;
+          var clmFirebaseSync, clmAuth, sync, userObj;
 
           beforeEach(function() {
             sync = jasmine.createSpyObj('$angularfire', ['$asObject']);
             userObj = jasmine.createSpyObj('$firebaseObject', ['$loaded', '$save']);
-            spfFirebaseSync = jasmine.createSpy().and.returnValue(sync);
+            clmFirebaseSync = jasmine.createSpy().and.returnValue(sync);
             sync.$asObject.and.returnValue(userObj);
-            spfAuth = {
+            clmAuth = {
               user: {
                 uid: 'custome:1',
                 google: {
@@ -105,17 +105,17 @@
             };
 
             module(function($provide) {
-              $provide.value('spfFirebaseSync', spfFirebaseSync);
-              $provide.value('spfAuth', spfAuth);
+              $provide.value('clmFirebaseSync', clmFirebaseSync);
+              $provide.value('clmAuth', clmAuth);
             });
           });
 
           it('should resolved to user data', function() {
-            inject(function($q, $rootScope, spfDataStore) {
+            inject(function($q, $rootScope, clmDataStore) {
               var result;
 
               userObj.$loaded.and.returnValue($q.when(userObj));
-              spfDataStore.auth.user().then(function(_result_) {
+              clmDataStore.auth.user().then(function(_result_) {
                 result = _result_;
               });
               $rootScope.$apply();
@@ -126,11 +126,11 @@
           });
 
           it('should return undefined if the user is not logged in', function() {
-            inject(function($rootScope, spfDataStore) {
+            inject(function($rootScope, clmDataStore) {
               var result, error;
 
-              spfAuth.user = null;
-              spfDataStore.auth.user().then(function(_result_) {
+              clmAuth.user = null;
+              clmDataStore.auth.user().then(function(_result_) {
                 result = _result_;
               }, function(e) {
                 error = e;
@@ -143,23 +143,23 @@
           });
 
           it('should setup user date', function() {
-            inject(function($rootScope, $q, spfDataStore) {
+            inject(function($rootScope, $q, clmDataStore) {
               var result;
 
               userObj.$loaded.and.returnValue($q.when(userObj));
               userObj.$save.and.returnValue($q.when(true));
               userObj.$value = null;
 
-              spfDataStore.auth.user().then(function(_result_) {
+              clmDataStore.auth.user().then(function(_result_) {
                 result = _result_;
               });
 
               $rootScope.$apply();
               expect(result).toBe(userObj);
               expect(userObj.$value).toEqual({
-                id: spfAuth.user.uid,
-                nickName: spfAuth.user.google.displayName,
-                displayName: spfAuth.user.google.displayName,
+                id: clmAuth.user.uid,
+                nickName: clmAuth.user.google.displayName,
+                displayName: clmAuth.user.google.displayName,
                 createdAt: {'.sv': 'timestamp'}
               });
               expect(userObj.$save).toHaveBeenCalled();
@@ -171,43 +171,43 @@
       });
 
 
-      describe('spfFirebaseSync', function() {
-        var $firebase, spfFirebaseRef, ref, sync;
+      describe('clmFirebaseSync', function() {
+        var $firebase, clmFirebaseRef, ref, sync;
 
-        beforeEach(module('spf'));
+        beforeEach(module('clm'));
 
         beforeEach(function() {
           ref = jasmine.createSpy('ref');
           sync = jasmine.createSpy('sync');
           $firebase = jasmine.createSpy('$firebase').and.returnValue(sync);
-          spfFirebaseRef = jasmine.createSpy('spfFirebaseRef').and.returnValue(ref);
+          clmFirebaseRef = jasmine.createSpy('clmFirebaseRef').and.returnValue(ref);
 
           module(function($provide) {
             $provide.value('$firebase', $firebase);
-            $provide.value('spfFirebaseRef', spfFirebaseRef);
+            $provide.value('clmFirebaseRef', clmFirebaseRef);
           });
         });
 
-        it('should create an angularFire object', inject(function(spfFirebaseSync) {
-          expect(spfFirebaseSync()).toBe(sync);
+        it('should create an angularFire object', inject(function(clmFirebaseSync) {
+          expect(clmFirebaseSync()).toBe(sync);
           expect($firebase).toHaveBeenCalledWith(ref);
-          expect(spfFirebaseRef).toHaveBeenCalledWith();
+          expect(clmFirebaseRef).toHaveBeenCalledWith();
         }));
 
-        it('should create an angularFire object with ref to child', inject(function(spfFirebaseSync) {
-          spfFirebaseSync(['foo', 'bar'], {limitToLast: 50});
-          expect(spfFirebaseRef).toHaveBeenCalledWith(['foo', 'bar'], {limitToLast: 50});
+        it('should create an angularFire object with ref to child', inject(function(clmFirebaseSync) {
+          clmFirebaseSync(['foo', 'bar'], {limitToLast: 50});
+          expect(clmFirebaseRef).toHaveBeenCalledWith(['foo', 'bar'], {limitToLast: 50});
         }));
 
       });
 
 
-      describe('spfFirebaseRef', function() {
-        var provider, factory, Firebase, firebaseSpy, spfFirebaseRef, ref;
+      describe('clmFirebaseRef', function() {
+        var provider, factory, Firebase, firebaseSpy, clmFirebaseRef, ref;
 
-        beforeEach(module('spf', function(spfFirebaseRefProvider) {
+        beforeEach(module('clm', function(clmFirebaseRefProvider) {
           var log = jasmine.createSpyObj('$log', ['info', 'debug']);
-          provider = spfFirebaseRefProvider;
+          provider = clmFirebaseRefProvider;
           factory = function() {
             return provider.$get.slice(-1).pop()({
               Firebase: Firebase
@@ -230,26 +230,26 @@
         });
 
         it('should return a Firebase ref', inject(function() {
-          spfFirebaseRef = factory();
-          expect(spfFirebaseRef().constructor).toBe(Firebase);
+          clmFirebaseRef = factory();
+          expect(clmFirebaseRef().constructor).toBe(Firebase);
         }));
 
         it('should return ref to singpath database', function() {
-          spfFirebaseRef = factory();
-          spfFirebaseRef();
+          clmFirebaseRef = factory();
+          clmFirebaseRef();
           expect(firebaseSpy).toHaveBeenCalledWith('https://singpath.firebaseio.com/');
         });
 
         it('should allow to configure the ref baseurl', function() {
           provider.setBaseUrl('https://singpath-dev.firebaseio.com/');
-          spfFirebaseRef = factory();
-          spfFirebaseRef();
+          clmFirebaseRef = factory();
+          clmFirebaseRef();
           expect(firebaseSpy).toHaveBeenCalledWith('https://singpath-dev.firebaseio.com/');
         });
 
         it('should allow to point to a specific child path', function() {
-          spfFirebaseRef = factory();
-          spfFirebaseRef(['auth', 'users']);
+          clmFirebaseRef = factory();
+          clmFirebaseRef(['auth', 'users']);
           expect(ref.child.calls.count()).toBe(2);
           expect(ref.child.calls.argsFor(0)).toEqual(['auth']);
           expect(ref.child.calls.argsFor(1)).toEqual(['users']);
@@ -257,8 +257,8 @@
 
         it('should allow to point to a specific query options', function() {
           expect(ref.child.calls.count()).toBe(0);
-          spfFirebaseRef = factory();
-          spfFirebaseRef(['events'], {
+          clmFirebaseRef = factory();
+          clmFirebaseRef(['events'], {
             orderBy: 'timestamps',
             limitToLast: 50
           });
@@ -270,20 +270,20 @@
       });
 
 
-      describe('spfAuth', function() {
-        var auth, spfFirebaseRef;
+      describe('clmAuth', function() {
+        var auth, clmFirebaseRef;
 
-        beforeEach(module('spf'));
+        beforeEach(module('clm'));
 
         beforeEach(function() {
           var $firebaseAuth;
 
-          spfFirebaseRef = jasmine.createSpy('spfFirebaseRef');
+          clmFirebaseRef = jasmine.createSpy('clmFirebaseRef');
           auth = jasmine.createSpyObj('auth', ['$getAuth', '$authWithOAuthPopup', '$authWithOAuthRedirect', '$unauth']);
           $firebaseAuth = jasmine.createSpy('$firebaseAuth').and.returnValue(auth);
 
           module(function($provide) {
-            $provide.value('spfFirebaseRef', spfFirebaseRef);
+            $provide.value('clmFirebaseRef', clmFirebaseRef);
             $provide.value('$firebaseAuth', $firebaseAuth);
           });
 
@@ -296,16 +296,16 @@
 
           auth.$getAuth.and.returnValue(user);
 
-          inject(function(spfAuth) {
-            expect(spfAuth.user).toBe(user);
+          inject(function(clmAuth) {
+            expect(clmAuth.user).toBe(user);
           });
         });
 
         it('should authenticate current user (guest)', function() {
           auth.$getAuth.and.returnValue(null);
 
-          inject(function(spfAuth) {
-            expect(spfAuth.user).toBeNull();
+          inject(function(clmAuth) {
+            expect(clmAuth.user).toBeNull();
           });
         });
 
@@ -322,35 +322,35 @@
           it('should authenticate against a google account', function() {
             auth.$getAuth.and.returnValue(null);
 
-            inject(function($q, spfAuth) {
+            inject(function($q, clmAuth) {
               auth.$authWithOAuthPopup.and.returnValue($q.when(user));
 
-              spfAuth.login();
+              clmAuth.login();
               expect(auth.$authWithOAuthPopup).toHaveBeenCalledWith('google');
             });
           });
 
-          it('should set spfAuth.user on success', function() {
+          it('should set clmAuth.user on success', function() {
             auth.$getAuth.and.returnValue(null);
 
-            inject(function($q, spfAuth, $rootScope) {
+            inject(function($q, clmAuth, $rootScope) {
               auth.$authWithOAuthPopup.and.returnValue($q.when(user));
 
-              spfAuth.login();
+              clmAuth.login();
               $rootScope.$apply();
-              expect(spfAuth.user).toBe(user);
+              expect(clmAuth.user).toBe(user);
             });
           });
 
           it('should resolve to auth user on success', function() {
             auth.$getAuth.and.returnValue(null);
 
-            inject(function($q, spfAuth, $rootScope) {
+            inject(function($q, clmAuth, $rootScope) {
               var result;
 
               auth.$authWithOAuthPopup.and.returnValue($q.when(user));
 
-              spfAuth.login().then(function(resp) {
+              clmAuth.login().then(function(resp) {
                 result = resp;
               });
 
@@ -362,13 +362,13 @@
           it('should reject on error', function() {
             auth.$getAuth.and.returnValue(null);
 
-            inject(function($q, spfAuth, $rootScope) {
+            inject(function($q, clmAuth, $rootScope) {
               var result;
               var err = new Error();
 
               auth.$authWithOAuthPopup.and.returnValue($q.reject(err));
 
-              spfAuth.login().catch(function(e) {
+              clmAuth.login().catch(function(e) {
                 result = e;
               });
 
@@ -380,7 +380,7 @@
           it('should resolve to $firebaseAuth.$authWithOAuthRedirect promise when popup is not available', function() {
             auth.$getAuth.and.returnValue(null);
 
-            inject(function($q, spfAuth, $rootScope) {
+            inject(function($q, clmAuth, $rootScope) {
               var result;
               var err = new Error();
               var redirectResult = {};
@@ -391,7 +391,7 @@
               // (redirect not available), but for the test it doesn't matter.
               auth.$authWithOAuthRedirect.and.returnValue($q.when(redirectResult));
 
-              spfAuth.login().then(function(resp) {
+              clmAuth.login().then(function(resp) {
                 result = resp;
               });
 
@@ -403,7 +403,7 @@
           it('should authenticate against a google account when popup is not available', function() {
             auth.$getAuth.and.returnValue(null);
 
-            inject(function($q, spfAuth, $rootScope) {
+            inject(function($q, clmAuth, $rootScope) {
               var err = new Error();
               var redirectResult = {};
 
@@ -411,7 +411,7 @@
               auth.$authWithOAuthPopup.and.returnValue($q.reject(err));
               auth.$authWithOAuthRedirect.and.returnValue($q.when(redirectResult));
 
-              spfAuth.login();
+              clmAuth.login();
               $rootScope.$apply();
               expect(auth.$authWithOAuthRedirect).toHaveBeenCalledWith('google');
             });
@@ -420,7 +420,7 @@
           it('should reject when neither popup or redirect is available', function() {
             auth.$getAuth.and.returnValue(null);
 
-            inject(function($q, spfAuth, $rootScope) {
+            inject(function($q, clmAuth, $rootScope) {
               var result;
               var popUpErr = new Error();
               var redirectErr = new Error();
@@ -429,7 +429,7 @@
               auth.$authWithOAuthPopup.and.returnValue($q.reject(popUpErr));
               auth.$authWithOAuthRedirect.and.returnValue($q.reject(redirectErr));
 
-              spfAuth.login().catch(function(e) {
+              clmAuth.login().catch(function(e) {
                 result = e;
               });
 
@@ -448,23 +448,23 @@
               uid: '1234'
             });
 
-            inject(function($q, spfAuth) {
+            inject(function($q, clmAuth) {
               auth.$unauth.and.returnValue(null);
 
-              spfAuth.logout();
+              clmAuth.logout();
               expect(auth.$unauth).toHaveBeenCalled();
             });
           });
 
-          it('should reset spfAuth.user', function() {
+          it('should reset clmAuth.user', function() {
             auth.$getAuth.and.returnValue({
               uid: '1234'
             });
 
-            inject(function($q, spfAuth) {
+            inject(function($q, clmAuth) {
               auth.$unauth.and.returnValue(null);
 
-              spfAuth.logout();
+              clmAuth.logout();
               expect(auth.user).toBeUndefined();
             });
           });
@@ -474,10 +474,10 @@
       });
 
 
-      describe('spfAlert', function() {
-        var log, spfAlert;
+      describe('clmAlert', function() {
+        var log, clmAlert;
 
-        beforeEach(module('spf'));
+        beforeEach(module('clm'));
 
         beforeEach(function() {
           module(function($provide) {
@@ -490,57 +490,57 @@
             });
           });
 
-          inject(function(_spfAlert_) {
-            spfAlert = _spfAlert_;
+          inject(function(_clmAlert_) {
+            clmAlert = _clmAlert_;
           });
         });
 
         it('should alert users', function() {
-          spfAlert('Type', 'Content');
+          clmAlert('Type', 'Content');
           expect(log).toHaveBeenCalledWith('Content', 'type');
         });
 
-        describe('spfAlert.success', function() {
+        describe('clmAlert.success', function() {
 
           it('should send a notification of type "success"', function() {
-            spfAlert.success('Content');
+            clmAlert.success('Content');
             expect(log).toHaveBeenCalledWith('Content', 'success');
           });
 
         });
 
-        describe('spfAlert.info', function() {
+        describe('clmAlert.info', function() {
 
           it('should send a notification of type "info"', function() {
-            spfAlert.info('Content');
+            clmAlert.info('Content');
             expect(log).toHaveBeenCalledWith('Content', undefined);
           });
 
         });
 
-        describe('spfAlert.warning', function() {
+        describe('clmAlert.warning', function() {
 
           it('should send a notification of type "warning"', function() {
-            spfAlert.warning('Content');
+            clmAlert.warning('Content');
             expect(log).toHaveBeenCalledWith('Content', 'error');
           });
 
         });
 
 
-        describe('spfAlert.danger', function() {
+        describe('clmAlert.danger', function() {
 
           it('should send a notification of type "danger"', function() {
-            spfAlert.danger('Content');
+            clmAlert.danger('Content');
             expect(log).toHaveBeenCalledWith('Content', 'error');
           });
 
         });
 
-        describe('spfAlert.error', function() {
+        describe('clmAlert.error', function() {
 
           it('should send a notification of type "error"', function() {
-            spfAlert.error('Content');
+            clmAlert.error('Content');
             expect(log).toHaveBeenCalledWith('Content', 'error');
           });
 
