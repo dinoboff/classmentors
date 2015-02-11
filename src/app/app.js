@@ -208,6 +208,9 @@
     'clmFirebaseRef',
     function($q, $firebaseAuth, clmFirebaseRef) {
       var auth = $firebaseAuth(clmFirebaseRef());
+      var options = {
+        scope: 'email'
+      };
 
       return {
         // The current user auth data (null is not authenticated).
@@ -226,13 +229,13 @@
         login: function() {
           var self = this;
 
-          return auth.$authWithOAuthPopup('google').then(function(user) {
+          return auth.$authWithOAuthPopup('google', options).then(function(user) {
             self.user = user;
             return user;
           }, function(error) {
             // clmAlert.warning('You failed to authenticate with Google');
             if (error.code === 'TRANSPORT_UNAVAILABLE') {
-              return auth.$authWithOAuthRedirect('google');
+              return auth.$authWithOAuthRedirect('google', options);
             }
             return $q.reject(error);
           });
@@ -264,11 +267,12 @@
    */
   factory('clmDataStore', [
     '$q',
+    '$log',
     'clmFirebaseRef',
     'clmFirebaseSync',
     'clmAuth',
     'crypto',
-    function clmDataStoreFactory($q, clmFirebaseRef, clmFirebaseSync, clmAuth, crypto) {
+    function clmDataStoreFactory($q, $log, clmFirebaseRef, clmFirebaseSync, clmAuth, crypto) {
       var userData, userDataPromise, api;
 
       api = {
@@ -317,6 +321,8 @@
            *
            */
           register: function(userData) {
+            var gravatarBaseUrl = '//www.gravatar.com/avatar/';
+
             if (angular.isUndefined(userData)) {
               return $q.reject(new Error('A user should be logged in to register'));
             }
@@ -327,19 +333,45 @@
               return $q.when(userData);
             }
 
-            userData.$value = {
+            var payload = {
               id: clmAuth.user.uid,
-              nickName: clmAuth.user.google.displayName,
               displayName: clmAuth.user.google.displayName,
+              fullName: clmAuth.user.google.displayName,
+              email: clmAuth.user.google.email,
+              gravatar: gravatarBaseUrl + crypto.md5(clmAuth.user.google.email),
               createdAt: {
                 '.sv': 'timestamp'
               }
             };
 
+            userData.$value = payload;
+
             return userData.$save().then(function() {
               return userData;
             });
+          },
+
+          publicId: function(userSync) {
+            if (!userSync || !userSync.publicId) {
+              return $q.reject(new Error('The user has set his/her user id.'));
+            }
+
+            return clmFirebaseSync(['auth/publicIds']).$set(userSync.publicId, userSync.$id).then(function() {
+              return clmFirebaseSync(['auth/usedPublicIds']).$set(userSync.publicId, true);
+            }, function(err) {
+              $log.info(err);
+              return $q(new Error('Failed to save public id. It might have already being used by an other user.'));
+            }).then(function() {
+              return userSync.$save();
+            });
+          },
+
+          isPublicIdAvailable: function(publicId) {
+            return clmFirebaseSync(['auth/usedPublicIds', publicId]).$asObject().$loaded().then(function(publicIdSync) {
+              return !publicIdSync.$value;
+            });
           }
+
         },
 
         classMentor: {
@@ -487,6 +519,10 @@
           var prf = 'SHA256';
 
           return {
+            md5: function(message) {
+              return CryptoJS.MD5(message);
+            },
+
             password: {
               /**
                * Return a hash for the password and options allowing

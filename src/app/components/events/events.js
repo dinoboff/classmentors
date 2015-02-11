@@ -31,11 +31,11 @@
     '$q',
     'clmAuth',
     'clmDataStore',
-    function classMentorsEventListRsolverFactory($q, $clmAuth, clmDataStore) {
+    function classMentorsEventListRsolverFactory($q, clmAuth, clmDataStore) {
       return function classMentorsEventRsolver() {
         return $q.all({
           events: clmDataStore.classMentor.events.list().$loaded(),
-          auth: $clmAuth
+          auth: clmAuth
         });
       };
     }
@@ -63,7 +63,7 @@
         clmDataStore.auth.user().then(function(userData) {
           var data = Object.assign({
             ownerId: self.auth.user.uid,
-            ownerName: userData.nickName,
+            ownerName: userData.displayName,
             createdAt: {
               '.sv': 'timestamp'
             }
@@ -74,7 +74,7 @@
           clmAlert.success('New event created.');
           self.reset(eventForm);
         }).catch(function(e) {
-          clmAlert(e.toString());
+          clmAlert.error(e.toString());
         }).finally(function() {
           self.creatingEvent = false;
         });
